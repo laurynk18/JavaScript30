@@ -7,7 +7,8 @@
 </head>
 <body>
 
-
+  <!-- "data-" = create custom attribute -->
+  <!-- data-key = corresponding keycode val -->
   <div class="keys">
     <div data-key="65" class="key">
       <kbd>A</kbd>
@@ -58,6 +59,26 @@
   <audio data-key="76" src="sounds/tink.wav"></audio>
 
 <script>
+  function playSound(e) {
+    // console.log(e.keyCode)
+    //attribute selector: ex) E[foo="warning"] Matches any E element whose "foo" attribute value is exactly equal to "warning".
+    const audio = document.querySelector(`audio[data-key="${e.keyCode}"]`) //select audio
+    const key = document.querySelector(`.key[data-key="${e.keyCode}"]`) //select key
+    if (!audio) return //stop function from running altogether
+    audio.currentTime = 0 //rewind to start
+    audio.play()
+    key.classList.add('playing')
+  }
+
+
+  function removeTransition(e) {
+    if (e.propertyName !== 'transform') return //skip if it's not a transform (else, each keydown fires 6 events)
+    this.classList.remove('playing') //remove class after end of transition
+  }
+
+  const keys = document.querySelectorAll('.key') //node list, not array
+  keys.forEach(key => key.addEventListener('transitionend', removeTransition))
+  window.addEventListener('keydown', playSound)
 
 </script>
 
